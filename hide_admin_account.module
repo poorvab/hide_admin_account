@@ -1,0 +1,28 @@
+<?php
+// $Id$
+
+/**
+* implementation of hook_user
+*/
+
+function hide_admin_account_user($op, &$edit, &$account, $category = NULL){
+	global $user;	
+	if($account->uid == 1 && $user->uid != 1) {	
+	$account = user_load(0);
+	}	
+}
+
+/**
+* implementation of hook_form_alter
+*/
+
+function hide_admin_account_form_alter(&$form, $form_state, $form_id){
+  global $user;
+  if($form_id == "user_admin_account" && $user->uid != 1) {
+	$keys = array('name', 'status', 'roles', 'member_for', 'last_access', 'operations','accounts');
+    foreach($keys as $key) {
+      unset($form[$key][1]);
+    }
+    unset($form['accounts']['#options'][1]);
+  }
+}
